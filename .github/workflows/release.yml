@@ -14,9 +14,9 @@ jobs:
         uses: ShotaKitazawa/action-detect-version@main
         id: detect-version
         if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'update-template') }}
-        env:
-          TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
         with:
+          head_branch: ${{ github.event.pull_request.head.ref }}
+          base_branch: ${{ github.event.pull_request.base.ref }}
           dir: ./templates
 
       - name: Get sentence of Release Note from Pull Request
