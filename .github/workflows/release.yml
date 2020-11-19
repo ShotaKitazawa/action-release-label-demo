@@ -39,13 +39,13 @@ jobs:
       - name: Create Release
         uses: actions/create-release@v1
         id: create-release
-        if: ${{ steps.detect-version.outputs.new_version != null }}
+        if: ${{ steps.detect-version.outputs.new_version != null && steps.regex-match.outputs.match != '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.detect-version.outputs.new_version }}
           release_name: ${{ steps.detect-version.outputs.new_version }}
-          body: ${{ steps.regex-match.outputs.group1 }}
+          body: ${{ steps.regex-match.outputs.match }}
           draft: false
           prerelease: false
 
