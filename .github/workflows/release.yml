@@ -17,7 +17,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          repos_url: ${{ github.event.repository.url }}
           pr_url: ${{ github.event.pull_request.url }}
           dir: templates/
 
