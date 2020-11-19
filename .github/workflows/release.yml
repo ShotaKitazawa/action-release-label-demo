@@ -14,6 +14,8 @@ jobs:
         uses: ShotaKitazawa/action-detect-version@main
         id: detect-version
         if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'update-template') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           repos_url: ${{ github.event.repository.url }}
           pr_url: ${{ github.event.pull_request.url }}
