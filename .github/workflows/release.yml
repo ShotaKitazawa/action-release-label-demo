@@ -32,7 +32,7 @@ jobs:
       - name: Push Tag
         uses: actions-ecosystem/action-push-tag@v1
         id: push-tag
-        if: ${{ steps.detect-version.outputs.new_version != null }}
+        if: ${{ steps.detect-version.outputs.new_version != null && steps.regex-match.outputs.match != '' }}
         with:
           tag: ${{ steps.detect-version.outputs.new_version }}
 
@@ -45,7 +45,7 @@ jobs:
         with:
           tag_name: ${{ steps.detect-version.outputs.new_version }}
           release_name: ${{ steps.detect-version.outputs.new_version }}
-          body: ${{ steps.regex-match.outputs.match }}
+          body: ${{ steps.regex-match.outputs.group1 }}
           draft: false
           prerelease: false
 
