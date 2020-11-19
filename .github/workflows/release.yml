@@ -40,6 +40,8 @@ jobs:
         uses: actions/create-release@v1
         id: create-release
         if: ${{ steps.detect-version.outputs.new_version != null }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.detect-version.outputs.new_version }}
           release_name: ${{ steps.detect-version.outputs.new_version }}
