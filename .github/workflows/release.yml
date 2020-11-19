@@ -10,24 +10,38 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions-ecosystem/action-release-label@v1
-        id: release-label
-        if: ${{ github.event.pull_request.merged == true }}
-
-      - uses: actions-ecosystem/action-get-latest-tag@v1
-        id: get-latest-tag
-        if: ${{ steps.release-label.outputs.level != null }}
-
-      - uses: actions-ecosystem/action-bump-semver@v1
-        id: bump-semver
-        if: ${{ steps.release-label.outputs.level != null }}
+      - name: Detect template version
+        uses: ShotaKitazawa/action-detect-version@v0
+        id: detect-version
+        if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'update-template') }}
+        env:
+          TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
         with:
-          current_version: ${{ steps.get-latest-tag.outputs.tag }}
-          level: ${{ steps.release-label.outputs.level }}
+          dir: ./templates
 
-      - uses: actions-ecosystem/action-push-tag@v1
-        if: ${{ steps.release-label.outputs.level != null }}
+      - name: Get sentence of Release Note from Pull Request
+        uses: actions-ecosystem/action-regex-match@v2
+        id: regex-match
+        if: ${{ steps.bump-semver.outputs.new_version != null }}
         with:
-          tag: ${{ steps.bump-semver.outputs.new_version }}
-          message: '${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
+          text: ${{ steps.get-merged-pull-request.outputs.body }}
+          regex: '```release_note([\s\S]*)```'
+
+      - name: Push Tag
+        uses: actions-ecosystem/action-push-tag@v1
+        id: push-tag
+        if: ${{ steps.detect-version.outputs.new_version != null }}
+        with:
+          tag: ${{ steps.detect-version.outputs.new_version }}
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        id: create-release
+        if: ${{ steps.detect-version.outputs.new_version != null }}
+        with:
+          tag_name: ${{ steps.detect-version.outputs.new_version }}
+          release_name: ${{ steps.detect-version.outputs.new_version }}
+          body: ${{ steps.regex-match.outputs.group1 }}
+          draft: false
+          prerelease: false
 
