@@ -19,7 +19,7 @@ jobs:
         with:
           repos_url: ${{ github.event.repository.url }}
           pr_url: ${{ github.event.pull_request.url }}
-          dir: templates
+          dir: templates/
 
       - name: Get sentence of Release Note from Pull Request
         uses: actions-ecosystem/action-regex-match@v2
