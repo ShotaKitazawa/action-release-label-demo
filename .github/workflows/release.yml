@@ -26,7 +26,7 @@ jobs:
         id: regex-match
         if: ${{ steps.detect-version.outputs.new_version != null }}
         with:
-          text: ${{ github.event.comment.body }}
+          text: ${{ github.event.pull_request.body }}
           regex: '```release_note([\s\S]*)```'
 
       - name: Push Tag
